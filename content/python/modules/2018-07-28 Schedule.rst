@@ -1,0 +1,152 @@
+Schedule
+########
+
+:date: 2018-07-28 11:00
+:modified: 2018-07-28 11:00
+:tags: module, py2, py3
+:category: python
+:slug: module/schedule
+:authors: Michael Cold
+:summary: Знакомимся с пакетом для создания job-ов по расписанию
+
+Общая инфа
+==========
+
+Пакет представляет собой API для создания job-ов
+
+
+API
+===
+
+Основные классы API:
+* Job
+* CancelJob
+* Scheduler
+
+Главным классом выступает класс Scheduler.
+
+По-умолчанию при импорте пакета создается объект этого класса Scheduler.default_scheduler, методы которого и используются для работы с job-ами.
+Метод пакета every(self, interval=1) создает объект класса Job и добавляет его к списку job-ов объекта Scheduler. 
+Соответственно оба класса привязаны друг другу соотношением типа родитель-потомок.
+Класса job имеет параметр self.schedule = scheduler, а класс Schedule - self.jobs.
+
+Класс CancelJob пустой и используется для определения отмененных job-ов. 
+
+
+Job
+===
+
+Добавление job-а к schedule.jobs осуществляется методом Job.do(self, job_func), где в качестве аргумента выступает метод job_func, определяемый пользователем в своем модуле.
+Выполнение всего списка schedule.jobs осуществляеся методом schedule.run_pending.
+
+Управление экземплярами job-ов осуществляется при помощи параметров класса:
+
+* self.interval     # pause interval * unit between runs
+* self.latest       # upper limit to the interval
+* self.job_func     # the job job_func to run
+* self.unit         # time units, e.g. 'minutes', 'hours', ...
+* self.at_time      # optional time at which this job runs
+* self.last_run     # datetime of the last run
+* self.next_run     # datetime of the next run
+* self.period       # timedelta between runs, only valid for
+* self.start_day    # Specific day of the week to start on
+* self.tags         # unique set of tags for the job
+* self.scheduler    # scheduler to register with
+
+self.unit - является универсальным, хранит в себе тип используемого периода 
+
+.. code-block:: py
+
+    import schedule
+    import time
+
+    def job():
+        print("I'm here...")
+
+
+    def test():
+        schedule.every(3).minutes.do(job)
+        schedule.every().hour.do(job)
+        schedule.every().day.at("15:05").do(job)
+        schedule.every().monday.do(job)
+        schedule.every().wednesday.at("13:15").do(job)
+
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+
+
+    if __name__ == "__main__":
+        test()
+
+В фрагменте выше каждый из вызовов метода do создает отдельный экземпляр job-а
+
+
+Tags
+====
+
+job представляет собой функцию и набор тегов. Теги в свою очередь хранятся в job.tags. По ним можно определять какие job-ы необходимо запускать или удалять.
+Например
+
+.. code-block:: py
+
+    schedule.clear('my_tag')
+
+приведет к удалению всех job-ов с тегом 'my_tag' из schedule.jobs и они не будут выполнены методом shcedule.run_pending()
+
+
+.. code-block:: py
+
+    import schedule
+    import time
+    import sys
+
+    def job():
+        print("I'm here ...")
+
+    def test():
+        schedule.every(2).seconds.tag('my_tag').do(job)
+
+        n = 0
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+            n = n + 1
+            if n > 5:
+                schedule.clear('my_tag')
+                sys.exit()
+
+
+    if __name__ == "__main__":
+        test()
+
+::
+
+    I'm here ...
+    I'm here ...
+
+
+
+schedule + nssm = job if os = Windows
+=====================================
+
+В моем случае данный пакет получил особую пользу в сочетании с утилитой nssm_.
+
+.. _nssm: http://nssm.cc
+
+Данная программа позволяет создавать службы под OS Windows, что в сочетании с возможностями schedule манипулировать системой задач не хуже планировщика cron в Linux
+Более того, конструкцию усовершенствовать при помощи пакета fabric_. 
+
+.. _fabric: http://www.fabfile.org 
+
+но это уже совсем другая история ...
+
+
+`readthedocs`_
+
+.. _`readthedocs`: http://schedule.readthedocs.io
+
+`git`_
+
+.. _`git`: http://github.com/dbader/schedule
+

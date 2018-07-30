@@ -1,0 +1,89 @@
+Декорирование классов
+#####################
+
+:date: 2018-03-11 11:20
+:modified: 2018-03-11 11:20
+:tags: decorator
+:category: python
+:slug: decorator
+:authors: Michael Cold
+:summary: Использование декорирования для модификации текущей реализации класса без необходимости использования стандартного механизма наследования
+
+Простой пример декорирования процедурой
+=======================================
+
+.. code-block:: py
+
+    def deco(cls):
+
+        print("I'm in decorator")
+        return cls
+
+
+    @deco
+    class MyClass:
+        a = 3
+
+        def __init__(self):
+            print("I'm class function")    
+
+        def quad(self, value):
+            return value * 4                        
+
+    obj = MyClass()                           
+    print(obj.quad(5))
+
+::
+
+    I'm in decorator
+    I'm class function
+    20
+
+Процедура декоратора выполняется перед вызовом инициализации экземпляра класса
+В качестве аргумента декоратор принимает объект класса, а не его экземпляр
+
+
+Добавление метода к классу декорированием
+=========================================
+
+
+Добавление функциональности к классу методом декорирования предполагает создание в функции-декораторе класса-наследника от объекта класса с добавлением новых атрибутов и методов и возвращении объекта данного класса в качестве результата функции-декоратора
+
+
+.. code-block:: py
+
+    def deco(cls):
+        class Wraper(cls):
+            def __init__(self):
+                cls.__init__(self)
+                print("I'm child class init function")
+
+            def new_func(self):
+                print("I'm new function!")
+
+        return Wraper
+
+
+    @deco
+    class MyClass:
+        a = 3
+
+        def __init__(self):
+            print("I'm class function")    
+
+        def quad(self, value):
+            return value * 4                        
+
+    obj = MyClass()                           
+    print(obj.quad(5))
+    obj.new_func()
+                                
+
+::
+
+    I'm class function
+    I'm child class init function
+    20
+    I'm new function!
+
+В роли класса-наследника выступает класс Wrapper, который наследуется от объекта-класса, получаемого как аргумент декорируемой функции

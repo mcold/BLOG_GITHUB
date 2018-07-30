@@ -1,0 +1,89 @@
+1. Init Project & create application
+####################################
+
+:date: 2018-07-28 11:00
+:modified: 2018-07-28 11:00
+:tags: tango
+:category: django
+:slug: tango/init
+:authors: Michael Cold
+:summary: Инициализируем проект и приложение
+
+
+Initialize project
+==================
+
+::
+
+    django-admin startproject tango
+
+
+::
+
+    └───tango
+    │   manage.py
+    │
+    └───tango
+            settings.py
+            urls.py
+            wsgi.py
+            __init__.py
+
+Run server
+==========
+
+::
+
+    python manage.py runserver
+
+Create application
+==================
+
+::
+
+    python manage.py startapp rango
+
+::
+
+    │   db.sqlite3
+    │   manage.py
+    │
+    ├───rango
+    │   │   admin.py
+    │   │   apps.py
+    │   │   models.py
+    │   │   tests.py
+    │   │   views.py
+    │   │   __init__.py
+    │   │
+    │   └───migrations
+    │           __init__.py
+    │
+    └───tango
+            settings.py
+            settings.pyc
+            urls.py
+            urls.pyc
+            wsgi.py
+            wsgi.pyc
+            __init__.py
+            __init__.pyc
+
+
+Register new application
+========================
+
+Добавляем приложение rango в качестве элемента списка INSTALLED_APPS модуля settings.py
+
+.. code-block:: py
+
+    INSTALLED_APPS = [
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'rango',
+    ]
+

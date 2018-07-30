@@ -1,0 +1,142 @@
+OOP
+###
+
+:date: 2018-07-28 18:40
+:modified: 2018-07-28 18:40
+:tags: oop
+:category: perl
+:slug: oop
+:authors: Michael Cold
+:summary: Object-Oriented Programming in Perl
+
+
+Multi-modules
+=============
+
+Прежде чем рассматривать объектно-ориентированный стиль программирования рассмотрим вариант процедурного программирования с множеством модулей
+
+В этом случае все функции выносятся в отдельные модули (файлы с расширением .pm). 
+Основной же скрипт (файл .pl) подгружает эти модули, а те в свою очередь подгружают модули, от которых зависят сами. 
+Скрипт берет функции, объявленные в подгруженных модулях, и с их помощью делает свое темное дело.
+
+MyLib.pm
+
+.. code-block:: perl
+
+    package MyLib;
+    use strict;
+
+    sub Test {
+    print "MyLib - Test Ok!\n";
+    }
+
+    1; # сообщает интерпретатору, что все ОК
+
+
+… а также пример скрипта, использующего этот модуль:
+
+test.pl
+
+.. code-block:: perl
+
+    use strict;
+    use MyLib;
+
+    MyLib::Test();
+
+
+Теперь представим себе, что есть модуль, функции которого нам приходится использовать довольно часто. 
+В этом случае некоторые функции было бы удобно импортировать в пространство имен скрипта. 
+Перепишем пример соответствующим образом.
+
+MyLib.pm
+
+.. code-block:: perl
+
+    package MyLib;
+    use strict;
+    use Exporter 'import';
+
+    our @EXPORT_OK = qw/Test/;
+
+    sub Test {
+    print "MyLib - Test Ok!\n";
+    }
+
+    1;
+
+test.pl
+
+.. code-block:: perl
+
+    use strict;
+    use MyLib qw/Test/;
+
+    Test(); # вызовет MyLib::Test()
+
+
+OOP
+===
+
+Person.pm
+---------
+
+.. code-block:: perl
+
+    package Person;
+
+    sub new {
+    # shift - подразумевает параметр метода при инициализации экземпляра класса
+    my $class = shift;   # в качестве 1-ого аргумента передает класс Person
+    # определяем свойства класса
+    my $self = {
+        _firstName => shift,
+        _lastName  => shift,
+        _ssn       => shift,
+    };
+    # Print all the values just for clarification.
+    print "First Name is $self->{_firstName}\n"; # свойство класса определяется как self -> { <parameter> }
+    print "Last Name is $self->{_lastName}\n";
+    print "SSN is $self->{_ssn}\n";
+    bless $self, $class; # функция bless возвращает ссылки на экземпляр класса и класс
+    return $self;
+    }
+    sub setFirstName {
+    my ( $self, $firstName ) = @_;
+    $self->{_firstName} = $firstName if defined($firstName);
+    return $self->{_firstName};
+    }
+
+    sub getFirstName {
+    my( $self ) = @_;
+    return $self->{_firstName};
+    }
+    1;
+
+employee.pl
+-----------
+
+.. code-block:: perl
+
+    use Person;
+
+    $object = new Person( "Mohammad", "Saleem", 23234345);
+    # Get first name which is set using constructor.
+    $firstName = $object->getFirstName();
+
+    print "Before Setting First Name is : $firstName\n";
+
+    # Now Set first name using helper function.
+    $object->setFirstName( "Mohd." );
+
+    # Now get first name set by helper function.
+    $firstName = $object->getFirstName();
+    print "Before Setting First Name is : $firstName\n";
+
+::
+
+    First Name is Mohammad
+    Last Name is Saleem
+    SSN is 23234345
+    Before Setting First Name is : Mohammad
+    Before Setting First Name is : Mohd.

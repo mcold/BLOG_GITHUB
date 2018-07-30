@@ -1,0 +1,24 @@
+0. Preview Tango Tutorial
+#########################
+
+
+:date: 2018-07-28 11:00
+:modified: 2018-07-28 11:00
+:tags: tango
+:category: django
+:slug: tango/preview
+:authors: Michael Cold
+:summary: Описание курса
+
+About
+=====
+
+Данная серия уроков предназначена для прохождения туториала `tango with django`_
+
+.. _`tango with django`: http://www.tangowithdjango.com
+
+При прохождении курса использовались:
+
+* Django        1.11.13
+* Python        2.7.15
+* Pillow        5.2.0

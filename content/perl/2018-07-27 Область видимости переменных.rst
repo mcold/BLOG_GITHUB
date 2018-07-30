@@ -1,0 +1,104 @@
+Область видимости переменных
+############################
+
+:date: 2018-07-27 11:00
+:modified: 2018-07-27 11:00
+:tags: scopes
+:category: perl
+:slug: scopes
+:authors: Michael Cold
+:summary: Namespace scopes
+
+
+Области видимости
+=================
+
+С точки зрения области видимости переменные в Perl делятся на 2 основных типа:
+- глобальные переменые пакета, объявляемые с помощью кострукции user vars или our
+- лексические переменные, объявляемые с помощью my   
+
+  
+
+
+Область видимости: блок
+=======================
+
+.. code-block:: perl
+
+    use strict;
+    use warnings;
+    
+    {
+        my $email = 'foo@bar.com';
+        print "$email\n";     # foo@bar.com
+    }
+    # print $email;
+    # $email does not exists
+    # Global symbol "$email" requires explicit package name at ...
+
+
+Внутри анонимного блока представлено объявление переменной $email
+Переменная существует только в пределах блока, не видна на уровне модуля
+
+Область видимости: везде
+========================
+
+.. code-block:: perl
+
+    use strict;
+    use warnings;
+    
+    my $lname = "Bar";
+    print "$lname\n";        # Bar
+    
+    {
+        print "$lname\n";    # Bar
+        $lname = "Other";
+        print "$lname\n";    # Other
+    }
+    print "$lname\n";        # Other
+
+Переменная lname объявлена на уровне модуля, поэтому видна везде
+
+Область видимости: локальное переопределение переменной
+=======================================================
+
+.. code-block:: perl
+
+    use strict;
+    use warnings;
+    
+    my $fname = "Foo";
+    print "$fname\n";        # Foo
+    
+    {
+        print "$fname\n";    # Foo
+    
+        my $fname  = "Other";
+        print "$fname\n";    # Other
+    }
+    print "$fname\n";        # Foo
+
+Переменная, объявленная на уровне модуля может быть переопределена в локальном блоке
+Тем самым глобальная переменная локально скрывается и возвращает свое значение после окончания блока
+
+Пример с множественным использованием анонимных блоков:
+
+.. code-block:: perl
+
+    use strict;
+    use warnings;
+
+    my $name  = "Origin";
+
+    {
+        my $name  = "Foo";
+        print "$name\n";    # Foo
+    }
+    {
+        my $name  = "Other";
+        print "$name\n";    # Other
+    }
+
+    print "$name\n";        # Origin
+

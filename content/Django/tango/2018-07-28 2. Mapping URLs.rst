@@ -1,0 +1,53 @@
+2. Mapping URLs
+###############
+
+:date: 2018-07-28 11:01
+:modified: 2018-07-28 11:01
+:tags: tango
+:category: django
+:slug: tango/mapping_urls
+:authors: Michael Cold
+:summary: Mapping urls of application into project
+
+
+tango.urls.py
+=============
+
+Подключаем url-ы rango приложения
+
+.. code-block:: py
+
+    from django.conf.urls import url
+    from django.contrib import admin
+    from django.conf.urls import include
+    from rango import views
+
+    urlpatterns = [
+        url(r'^admin/', admin.site.urls),
+        url(r'^rango/', include('rango.urls')),
+        url(r'^admin/', admin.site.urls),
+    ]
+
+
+rango.urls.py
+=============
+
+.. code-block:: py
+
+    from django.conf.urls import url
+    from rango import views
+
+    urlpatterns = [
+        url(r'^$', views.index, name='index'),
+    ]
+
+rango.views.py
+==============
+
+.. code-block:: py
+
+    from django.http import HttpResponse
+
+    def index(request):
+        return HttpResponse("Rango says hey there partner!")
+

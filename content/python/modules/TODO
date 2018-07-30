@@ -1,0 +1,11 @@
+Celery
+numpy
+pandas
+regexp
+matplotlib
+fabric
+os
+sys
+jinja2
+setuptools
+wheel
